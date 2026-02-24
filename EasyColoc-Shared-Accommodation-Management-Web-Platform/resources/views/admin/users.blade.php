@@ -1,4 +1,4 @@
-<x-admin-layout>
+<x-app-layout>
     <x-slot name="title">Users</x-slot>
     <x-slot name="header">User Moderation</x-slot>
 
@@ -111,4 +111,4 @@
         </div>
 
     </div>
-</x-admin-layout>
+</x-app-layout>

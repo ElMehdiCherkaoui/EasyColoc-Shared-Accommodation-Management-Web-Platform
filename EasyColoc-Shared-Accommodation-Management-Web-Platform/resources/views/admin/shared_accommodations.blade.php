@@ -1,4 +1,4 @@
-<x-admin-layout>
+<x-app-layout>
     <x-slot name="title">Accommodations</x-slot>
     <x-slot name="header">Manage Shared Homes</x-slot>
 
@@ -105,4 +105,4 @@
         </div>
 
     </div>
-</x-admin-layout>
+</x-app-layout>

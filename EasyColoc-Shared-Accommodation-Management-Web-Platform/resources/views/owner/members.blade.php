@@ -10,22 +10,91 @@
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased selection:bg-indigo-500 selection:text-white pb-12">
 
-    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">R</div>
-                    <span class="text-xl font-bold tracking-tight text-gray-900">RoomieSync</span>
-                </div>
-                <div class="hidden sm:flex sm:space-x-8 ml-8 w-full">
-                    <a href="#" class="border-transparent text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Dashboard</a>
-                    <a href="#" class="border-transparent text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Expenses</a>
-                    <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Roommates</a>
-                    <a href="#" class="border-transparent text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Categories</a>
-                </div>
-            </div>
+    <nav class="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+
+      <a href="{{ route('owner.dashboard') }}" class="flex items-center gap-2">
+        <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-sm">R</div>
+        <span class="text-lg font-extrabold tracking-tight text-gray-900">RoomieSync</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-1">
+        <a href="{{ route('owner.dashboard') }}"
+           class="px-3 py-2 rounded-xl text-sm font-bold transition
+           {{ request()->routeIs('owner.dashboard') ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+          Dashboard
+        </a>
+
+        <a href="{{ route('owner.expenses') }}"
+           class="px-3 py-2 rounded-xl text-sm font-bold transition
+           {{ request()->routeIs('owner.expenses') ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+          Expenses
+        </a>
+
+        <a href="{{ route('owner.members') }}"
+           class="px-3 py-2 rounded-xl text-sm font-bold transition
+           {{ request()->routeIs('owner.members') ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+          Roommates
+        </a>
+
+        <a href="{{ route('owner.categories') }}"
+           class="px-3 py-2 rounded-xl text-sm font-bold transition
+           {{ request()->routeIs('owner.categories') ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+          Categories
+        </a>
+
+        <a href="{{ route('profile.edit') }}"
+           class="ml-1 px-3 py-2 rounded-xl text-sm font-bold transition
+           {{ request()->routeIs('profile.edit') ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+          Profile
+        </a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200 uppercase tracking-wider">
+          Owner
+        </span>
+
+        <div class="hidden sm:block text-right leading-4">
+          <div class="text-sm font-extrabold text-gray-800">{{ auth()->user()->name }}</div>
+          <div class="text-xs text-gray-500">{{ auth()->user()->email }}</div>
         </div>
-    </nav>
+
+        <a href="{{ route('profile.edit') }}"
+           class="h-10 w-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 border-2 border-white shadow-sm flex items-center justify-center text-white font-extrabold text-sm">
+          {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+        </a>
+
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit"
+                  class="hidden sm:inline-flex px-4 py-2 rounded-xl text-sm font-extrabold bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm transition">
+            Logout
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="md:hidden border-t border-gray-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      <a href="{{ route('profile.edit') }}"
+         class="px-3 py-2 rounded-xl text-sm font-extrabold text-indigo-700 bg-indigo-50 border border-indigo-200">
+        Profile
+      </a>
+
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit"
+                class="px-4 py-2 rounded-xl text-sm font-extrabold bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 shadow-sm transition">
+          Logout
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>
 
     <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

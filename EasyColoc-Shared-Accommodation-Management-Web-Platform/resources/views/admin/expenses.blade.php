@@ -1,4 +1,4 @@
-<x-admin-layout>
+<x-app-layout>
     <x-slot name="title">Platform Expenses</x-slot>
     <x-slot name="header">Global Financial Logs</x-slot>
 
@@ -87,4 +87,4 @@
         </div>
 
     </div>
-</x-admin-layout>
+</x-app-layout>
