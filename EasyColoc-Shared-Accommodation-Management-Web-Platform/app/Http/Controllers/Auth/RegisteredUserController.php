@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -31,14 +32,20 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $userRole = Role::firstOrCreate(['name' => 'User']);
+
+        $isFirstUser = User::count() === 0;
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role_id' => $isFirstUser ? $adminRole->id : $userRole->id,
         ]);
 
         event(new Registered($user));
