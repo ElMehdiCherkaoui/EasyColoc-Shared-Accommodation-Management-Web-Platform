@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - EasyColoc</title>
+    <title>Mes colocations - EasyColoc</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -21,7 +22,6 @@
             $isAdmin = $user->role?->name === 'Admin';
         }
 
-        $current = 'dashboard';
     @endphp
 
     <div class="min-h-screen flex">
@@ -42,22 +42,20 @@
 
             {{-- Nav --}}
             <nav class="space-y-1">
-                <a href=""
+                <a href="{{ route('dashboard') }}"
                     class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition
-              bg-indigo-50 text-indigo-700 ">
-                    <span class="w-8 h-8 rounded-lg flex items-center justify-center
-          bg-indigo-100">
+               text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+                    <span
+                        class="w-8 h-8 rounded-lg flex items-center justify-center
+               bg-slate-100 group-hover:bg-slate-200">
                         🏠
                     </span>
                     <span>Dashboard</span>
                 </a>
 
                 <a href="{{ route('member.colocations.index') }}"
-                    class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition
-              text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
-                    <span
-                        class="w-8 h-8 rounded-lg flex items-center justify-center
-               bg-slate-100 group-hover:bg-slate-200">
+                    class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition bg-indigo-50 text-indigo-700">
+                    <span class="w-8 h-8 rounded-lg flex items-center justify-center bg-indigo-100">
                         👥
                     </span>
                     <span>Colocations</span>
@@ -90,7 +88,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-[11px] uppercase tracking-wider text-slate-300">Votre réputation</div>
-                            <div class="text-2xl font-extrabold mt-1">+0 points</div>
+                            <div class="text-2xl font-extrabold mt-1">+{{ $user->reputation ?? 0 }} points</div>
                         </div>
                         <div class="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">
                             Beta
@@ -101,7 +99,7 @@
                         <div class="h-full w-1/3 bg-green-400"></div>
                     </div>
                     <div class="text-[11px] text-slate-300 mt-2">
-                        Improve by paying on time.
+                        Keep it high by paying on time.
                     </div>
                 </div>
             </div>
@@ -109,20 +107,20 @@
 
         {{-- MAIN --}}
         <main class="flex-1 px-6 py-6">
-            {{-- Top bar --}}
+
+            {{-- HEADER --}}
             <div class="flex items-center justify-between gap-4 mb-8">
                 <div>
                     <div class="text-xs text-slate-500 mb-1">EasyColoc / Member</div>
-                    <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
-                    <p class="text-sm text-slate-500 mt-1">Your stats overview</p>
+                    <h1 class="text-2xl font-semibold tracking-tight">Mes colocations</h1>
+                    <p class="text-sm text-slate-500 mt-1">Create or manage your shared homes</p>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <span
-                        class="hidden sm:inline-flex items-center gap-2 text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        Online
-                    </span>
+                    <button
+                        class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm">
+                        + Nouvelle colocation
+                    </button>
 
                     <div
                         class="flex items-center gap-3 bg-white border border-slate-200 px-3 py-2 rounded-2xl shadow-sm">
@@ -139,46 +137,40 @@
                 </div>
             </div>
 
-            {{-- Stats --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-slate-500">My colocations</div>
-                        <div
-                            class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-                            🏠</div>
+            {{-- CONTENT --}}
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <div class="p-6 border-b border-slate-200 flex items-center justify-between">
+                    <div>
+                        <h2 class="font-semibold text-lg">Colocations</h2>
+                        <p class="text-sm text-slate-500">All your current and past shared homes</p>
                     </div>
-                    <div class="text-3xl font-bold mt-3">0</div>
-                    <div class="text-xs text-slate-500 mt-1">Active homes you joined/created</div>
+
+                    <div class="flex items-center gap-2">
+                        <input type="text" placeholder="Search..."
+                            class="hidden sm:block text-sm border border-slate-200 rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200" />
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-slate-500">Total expenses</div>
-                        <div
-                            class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-                            🧾</div>
+                {{-- Empty state --}}
+                <div class="text-center py-24 text-slate-500">
+                    <div
+                        class="mx-auto w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl">
+                        👥
                     </div>
-                    <div class="text-3xl font-bold mt-3">0</div>
-                    <div class="text-xs text-slate-500 mt-1">Expenses created in your colocations</div>
+                    <div class="mt-4 text-lg font-semibold text-slate-800">Aucune colocation</div>
+                    <div class="text-sm mt-1">Commencez par en créer une nouvelle.</div>
+
+                    <button
+                        class="mt-6 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm">
+                        + Nouvelle colocation
+                    </button>
                 </div>
 
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-slate-500">Balance</div>
-                        <div
-                            class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
-                            ⚖️</div>
-                    </div>
-                    <div class="text-3xl font-bold mt-3">0 DH</div>
-                    <div class="text-xs text-slate-500 mt-1">What you owe / what you should receive</div>
-                </div>
-            </div>
+                {{-- Later: we will replace empty state with a list/cards from DB --}}
+            </section>
 
-       
         </main>
     </div>
-
 </body>
 
 </html>
