@@ -1,4 +1,4 @@
-{{-- resources/views/profile/edit.blade.php --}}
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -27,9 +27,9 @@
 
     <div class="min-h-screen flex">
 
-        {{-- SIDEBAR --}}
+
         <aside class="w-[270px] bg-white border-r border-slate-200 px-4 py-5 flex flex-col">
-            {{-- Logo --}}
+
             <div class="flex items-center gap-3 px-2 mb-8">
                 <div
                     class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-extrabold tracking-tight shadow-sm">
@@ -41,7 +41,6 @@
                 </div>
             </div>
 
-            {{-- Nav --}}
             <nav class="space-y-1">
                 <a href="{{ route('dashboard') }}"
                     class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition
@@ -85,7 +84,7 @@
                 </a>
             </nav>
 
-            {{-- Logout --}}
+          
             <form method="POST" action="{{ route('logout') }}" class="mt-6">
                 @csrf
                 <button type="submit"
@@ -94,7 +93,7 @@
                 </button>
             </form>
 
-            {{-- Reputation card --}}
+          
             <div class="mt-auto pt-6">
                 <div class="rounded-2xl bg-slate-900 text-white p-4 shadow-sm">
                     <div class="flex items-start justify-between">
@@ -117,9 +116,9 @@
             </div>
         </aside>
 
-        {{-- MAIN --}}
+      
         <main class="flex-1 px-6 py-6">
-            {{-- Top header --}}
+       
             <div class="flex items-center justify-between gap-4 mb-8">
                 <div>
                     <div class="text-xs text-slate-500 mb-1">EasyColoc / Settings</div>
@@ -148,10 +147,8 @@
                 </div>
             </div>
 
-            {{-- Content layout --}}
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                {{-- LEFT: Summary --}}
                 <aside class="lg:col-span-4 space-y-6">
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                         <div class="flex items-center gap-4">
@@ -206,7 +203,6 @@
                     </div>
                 </aside>
 
-                {{-- RIGHT: Breeze forms --}}
                 <section class="lg:col-span-8 space-y-6">
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
                         <div class="mt-6">

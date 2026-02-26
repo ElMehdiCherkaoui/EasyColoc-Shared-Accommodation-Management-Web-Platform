@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes colocations - EasyColoc</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -21,14 +20,12 @@
         if ($user) {
             $isAdmin = $user->role?->name === 'Admin';
         }
-
     @endphp
 
     <div class="min-h-screen flex">
 
-        {{-- SIDEBAR --}}
+
         <aside class="w-[270px] bg-white border-r border-slate-200 px-4 py-5 flex flex-col">
-            {{-- Logo --}}
             <div class="flex items-center gap-3 px-2 mb-8">
                 <div
                     class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-extrabold tracking-tight shadow-sm">
@@ -40,14 +37,11 @@
                 </div>
             </div>
 
-            {{-- Nav --}}
             <nav class="space-y-1">
                 <a href="{{ route('dashboard') }}"
-                    class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition
-               text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+                    class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition text-slate-600 hover:bg-slate-100 hover:text-slate-900">
                     <span
-                        class="w-8 h-8 rounded-lg flex items-center justify-center
-               bg-slate-100 group-hover:bg-slate-200">
+                        class="w-8 h-8 rounded-lg flex items-center justify-center bg-slate-100 group-hover:bg-slate-200">
                         🏠
                     </span>
                     <span>Dashboard</span>
@@ -82,7 +76,6 @@
                 </a>
             </nav>
 
-            {{-- Reputation card --}}
             <div class="mt-auto pt-6">
                 <div class="rounded-2xl bg-slate-900 text-white p-4 shadow-sm">
                     <div class="flex items-start justify-between">
@@ -105,10 +98,10 @@
             </div>
         </aside>
 
-        {{-- MAIN --}}
+
         <main class="flex-1 px-6 py-6">
 
-            {{-- HEADER --}}
+
             <div class="flex items-center justify-between gap-4 mb-8">
                 <div>
                     <div class="text-xs text-slate-500 mb-1">EasyColoc / Member</div>
@@ -117,10 +110,17 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button
-                        class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm">
-                        + Nouvelle colocation
-                    </button>
+                    @if ($hasActiveColoc)
+                        <button disabled
+                            class="px-4 py-2 rounded-xl bg-slate-200 text-slate-500 font-semibold cursor-not-allowed border border-slate-200">
+                            + Nouvelle colocation
+                        </button>
+                    @else
+                        <a href="{{ route('member.colocations.create') }}"
+                            class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm">
+                            + Nouvelle colocation
+                        </a>
+                    @endif
 
                     <div
                         class="flex items-center gap-3 bg-white border border-slate-200 px-3 py-2 rounded-2xl shadow-sm">
@@ -137,7 +137,7 @@
                 </div>
             </div>
 
-            {{-- CONTENT --}}
+
             <section class="bg-white rounded-2xl border border-slate-200 shadow-sm">
                 <div class="p-6 border-b border-slate-200 flex items-center justify-between">
                     <div>
@@ -151,25 +151,101 @@
                     </div>
                 </div>
 
-                {{-- Empty state --}}
-                <div class="text-center py-24 text-slate-500">
-                    <div
-                        class="mx-auto w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl">
-                        👥
+                @if ($memberships->isEmpty())
+                    <div class="text-center py-24 text-slate-500">
+                        <div
+                            class="mx-auto w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl">
+                            👥
+                        </div>
+                        <div class="mt-4 text-lg font-semibold text-slate-800">Aucune colocation</div>
+                        <div class="text-sm mt-1">Commencez par en créer une nouvelle.</div>
+
+                        @if (!$hasActiveColoc)
+                            <a href="{{ route('member.colocations.create') }}"
+                                class="inline-flex mt-6 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm">
+                                + Nouvelle colocation
+                            </a>
+                        @endif
                     </div>
-                    <div class="mt-4 text-lg font-semibold text-slate-800">Aucune colocation</div>
-                    <div class="text-sm mt-1">Commencez par en créer une nouvelle.</div>
+                @else
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        @foreach ($memberships as $m)
+                            @php
+                                $isActive = $m->is_active;
+                                $isCancelled = $m->coloc_status === false;
 
-                    <button
-                        class="mt-6 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm">
-                        + Nouvelle colocation
-                    </button>
-                </div>
+                                $cardClass =
+                                    'group rounded-2xl border p-5 shadow-sm hover:shadow-md transition ' .
+                                    ($isActive && !$isCancelled
+                                        ? 'bg-indigo-50 border-indigo-200'
+                                        : 'bg-white border-slate-200') .
+                                    ($isCancelled ? ' opacity-70' : '');
 
-                {{-- Later: we will replace empty state with a list/cards from DB --}}
-            </section>
+                                $iconClass =
+                                    $isActive && !$isCancelled
+                                        ? 'bg-indigo-100 border-indigo-200 text-indigo-700'
+                                        : 'bg-slate-50 border-slate-200 text-slate-700';
+                            @endphp
 
-        </main>
+                            @if (!$isCancelled)
+                                <div class="{{ $cardClass }}">
+                                @else
+                                    <a href="" class="{{ $cardClass }}">
+                            @endif
+
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-11 h-11 rounded-2xl border flex items-center justify-center {{ $iconClass }}">
+                                        🏠
+                                    </div>
+
+                                    <div>
+                                        <div
+                                            class="font-semibold text-slate-900 group-hover:text-indigo-700 transition">
+                                            {{ $m->coloc_name }}
+                                        </div>
+                                        <div class="text-xs text-slate-500">
+                                            Joined {{ \Carbon\Carbon::parse($m->joined_at)->format('M d, Y') }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if ($isActive && !$isCancelled && $m->coloc_status === 'active')
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span>
+                                        Active
+                                    </span>
+                                @elseif($isCancelled)
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></span>
+                                        Cancelled
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+                                        History
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="mt-4 text-sm text-slate-600">
+                                Role: <span class="font-semibold">{{ strtoupper($m->role) }}</span>
+                            </div>
+
+                            @if ($isCancelled)
+                    </div>
+                @else
+                    </a>
+                @endif
+                @endforeach
+    </div>
+    @endif
+    </section>
+
+    </main>
     </div>
 </body>
 

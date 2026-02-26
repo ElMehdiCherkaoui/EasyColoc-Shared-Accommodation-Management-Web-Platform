@@ -26,9 +26,8 @@
 
     <div class="min-h-screen flex">
 
-        {{-- SIDEBAR --}}
         <aside class="w-[270px] bg-white border-r border-slate-200 px-4 py-5 flex flex-col">
-            {{-- Logo --}}
+
             <div class="flex items-center gap-3 px-2 mb-8">
                 <div
                     class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-extrabold tracking-tight shadow-sm">
@@ -40,13 +39,13 @@
                 </div>
             </div>
 
-            {{-- Nav --}}
+
             <nav class="space-y-1">
                 <a href=""
                     class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition
-              bg-indigo-50 text-indigo-700 ">
+			  bg-indigo-50 text-indigo-700 ">
                     <span class="w-8 h-8 rounded-lg flex items-center justify-center
-          bg-indigo-100">
+		  bg-indigo-100">
                         🏠
                     </span>
                     <span>Dashboard</span>
@@ -54,10 +53,10 @@
 
                 <a href="{{ route('member.colocations.index') }}"
                     class="group flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition
-              text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+			  text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
                     <span
                         class="w-8 h-8 rounded-lg flex items-center justify-center
-               bg-slate-100 group-hover:bg-slate-200">
+			   bg-slate-100 group-hover:bg-slate-200">
                         👥
                     </span>
                     <span>Colocations</span>
@@ -84,7 +83,7 @@
                 </a>
             </nav>
 
-            {{-- Reputation card --}}
+
             <div class="mt-auto pt-6">
                 <div class="rounded-2xl bg-slate-900 text-white p-4 shadow-sm">
                     <div class="flex items-start justify-between">
@@ -107,9 +106,9 @@
             </div>
         </aside>
 
-        {{-- MAIN --}}
+
         <main class="flex-1 px-6 py-6">
-            {{-- Top bar --}}
+
             <div class="flex items-center justify-between gap-4 mb-8">
                 <div>
                     <div class="text-xs text-slate-500 mb-1">EasyColoc / Member</div>
@@ -139,7 +138,7 @@
                 </div>
             </div>
 
-            {{-- Stats --}}
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between">
@@ -175,7 +174,8 @@
                 </div>
             </div>
 
-       
+            
+
         </main>
     </div>
 
