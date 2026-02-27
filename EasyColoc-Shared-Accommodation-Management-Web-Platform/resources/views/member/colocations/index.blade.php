@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes colocations - EasyColoc</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-slate-50 text-slate-900 antialiased">
@@ -172,38 +171,27 @@
                         @foreach ($memberships as $m)
                             @php
                                 $isActive = $m->is_active;
-                                $isCancelled = $m->coloc_status === false;
-
-                                $cardClass =
-                                    'group rounded-2xl border p-5 shadow-sm hover:shadow-md transition ' .
-                                    ($isActive && !$isCancelled
-                                        ? 'bg-indigo-50 border-indigo-200'
-                                        : 'bg-white border-slate-200') .
-                                    ($isCancelled ? ' opacity-70' : '');
-
-                                $iconClass =
-                                    $isActive && !$isCancelled
-                                        ? 'bg-indigo-100 border-indigo-200 text-indigo-700'
-                                        : 'bg-slate-50 border-slate-200 text-slate-700';
+                                $isCancelled = $m->sharedAccommodation->status === 'false' ;
                             @endphp
 
-                            @if (!$isCancelled)
-                                <div class="{{ $cardClass }}">
-                                @else
-                                    <a href="" class="{{ $cardClass }}">
+                            @if ($isCancelled)
+                                <div class="group rounded-2xl border p-5 shadow-sm hover:shadow-md transition bg-white border-slate-200 opacity-70">
+                            @else
+                                <a href="{{ route('member.colocations.show', $m->shared_accommodation_id) }}"
+                                    class="group rounded-2xl border p-5 shadow-sm hover:shadow-md transition bg-indigo-50 border-indigo-200">
                             @endif
 
                             <div class="flex items-start justify-between gap-3">
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="w-11 h-11 rounded-2xl border flex items-center justify-center {{ $iconClass }}">
+                                        class="w-11 h-11 rounded-2xl border flex items-center justify-center bg-indigo-100 border-indigo-200 text-indigo-700">
                                         🏠
                                     </div>
 
                                     <div>
                                         <div
                                             class="font-semibold text-slate-900 group-hover:text-indigo-700 transition">
-                                            {{ $m->coloc_name }}
+                                            {{ $m->sharedAccommodation->name  }}
                                         </div>
                                         <div class="text-xs text-slate-500">
                                             Joined {{ \Carbon\Carbon::parse($m->joined_at)->format('M d, Y') }}
@@ -211,7 +199,7 @@
                                     </div>
                                 </div>
 
-                                @if ($isActive && !$isCancelled && $m->coloc_status === 'active')
+                                @if ($isActive && !$isCancelled && $m->sharedAccommodation->status === 'active')
                                     <span
                                         class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                                         <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5"></span>
@@ -236,16 +224,16 @@
                             </div>
 
                             @if ($isCancelled)
+                                </div>
+                            @else
+                                </a>
+                            @endif
+                        @endforeach
                     </div>
-                @else
-                    </a>
                 @endif
-                @endforeach
-    </div>
-    @endif
-    </section>
+            </section>
 
-    </main>
+        </main>
     </div>
 </body>
 
