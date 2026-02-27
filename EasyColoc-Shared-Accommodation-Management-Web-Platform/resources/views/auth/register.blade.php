@@ -74,6 +74,7 @@
 
                 <form method="POST" action="{{ route('register') }}" class="space-y-4">
                     @csrf
+                    <input type="hidden" name="invitation_token" value="{{ $invitation_token ?? request('invitation_token') }}">
 
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
@@ -92,7 +93,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
                             </div>
-                            <input id="email" name="email" type="email" autocomplete="email" required
+                            <input id="email" name="email" type="email" autocomplete="email" value="{{ old('email', $email ?? '') }}" required 
                                 class="pl-10 block w-full rounded-lg border-gray-300 bg-gray-50 border py-2.5 px-4 text-sm focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-200 outline-none" placeholder="you@example.com">
                         </div>
                     </div>
