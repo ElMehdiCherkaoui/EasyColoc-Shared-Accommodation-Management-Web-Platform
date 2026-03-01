@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('title');
             $table->decimal('amount', 10, 2);
             $table->date('expense_date');
+            $table->boolean('paid');
             $table->timestamps();
             $table->foreignId('shared_accommodation_id')->constrained()->cascadeOnDelete();
             $table->foreignId('category_id')->constrained()->restrictOnDelete();
