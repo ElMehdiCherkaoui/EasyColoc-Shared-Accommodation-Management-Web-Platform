@@ -13,6 +13,7 @@ class Expense extends Model
         'shared_accommodation_id', 
         'category_id', 
         'user_id', 
+        'paid',
         'title', 
         'amount', 
         'expense_date'
