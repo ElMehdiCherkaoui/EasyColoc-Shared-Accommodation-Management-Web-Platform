@@ -2,58 +2,42 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
-use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
-use App\Http\Controllers\Owner\ExpensesController as OwnerExpensesController;
-use App\Http\Controllers\Owner\RoommatesController as OwnerRoommatesController;
-use App\Http\Controllers\Owner\CategoriesController as OwnerCategoriesController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\AccommodationController as AdminAccommodationController;
-use App\Http\Controllers\Admin\ExpenseController as AdminExpenseController;
-use App\Http\Controllers\Member\BalancesController;
-use App\Http\Controllers\Member\ExpensesController;
-use App\Http\Controllers\Member\InvitationsController;
+use App\Http\Controllers\memberDashboardController;
+use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\Member\CategoryController;
 
-Route::get('/balances', [BalancesController::class, 'index'])->middleware(['auth', 'verified'])->name('member.balances');
-Route::get('/expenses', [ExpensesController::class, 'index'])->middleware(['auth', 'verified'])->name('member.expenses');
-Route::get('/invitations', [InvitationsController::class, 'index'])->middleware(['auth', 'verified'])->name('member.invitation');
+use App\Http\Controllers\Member\ColocationController;
 
-Route::get('/expenses', [OwnerExpensesController::class, 'index'])->name('owner.expenses');
-Route::get('/roommates', [OwnerRoommatesController::class, 'index'])->name('owner.members');
-Route::get('/categories', [OwnerCategoriesController::class, 'index'])->name('owner.categories');
 
+
+Route::get('/colocations', [ColocationController::class, 'index'])->middleware(['auth', 'verified'])->name('member.colocations.index');
+Route::get('/colocations/create', [ColocationController::class, 'create'])->middleware(['auth', 'verified'])->name('member.colocations.create');
+Route::get('/colocations/{id}', [ColocationController::class, 'show'])->middleware(['auth', 'verified'])->name('member.colocations.show');
+Route::post('/colocations/store', [ColocationController::class, 'store'])->middleware(['auth', 'verified'])->name('member.colocations.store');
+Route::post('/colocations/{id}/cancel', [ColocationController::class, 'cancel'])->middleware(['auth', 'verified'])->name('member.colocations.cancel');
+Route::post('/colocations/{id}/leave', [ColocationController::class, 'leave'])->middleware(['auth', 'verified'])->name('member.colocations.leave');
+Route::post('/colocations/{id}/members/{memberUserId}/kick', [ColocationController::class, 'kickMember'])->middleware(['auth', 'verified'])->name('member.colocations.members.kick');
+Route::get('/colocation/{id}/categories', [CategoryController::class, 'index'])->middleware(['auth', 'verified'])->name('member.colocations.categories.index');
+Route::get('/colocation/{id}/categories/create', [CategoryController::class, 'create'])->middleware(['auth', 'verified'])->name('member.colocations.categories.create');
+Route::post('/colocation/{id}/categories', [CategoryController::class, 'store'])->middleware(['auth', 'verified'])->name('member.colocations.categories.store');
+Route::get('/colocation/{id}/invitation', [InvitationController::class, 'index'])->middleware(['auth', 'verified'])->name('member.colocations.invitation.index');
+Route::get('/colocation/{id}/expense', [ExpenseController::class, 'create'])->middleware(['auth', 'verified'])->name('member.colocations.expense');
+Route::post('/colocation/{id}/expense/store', [ExpenseController::class, 'store'])->middleware(['auth', 'verified'])->name('member.colocations.expense.store');
+Route::post('/expenses/{expenseId}/delete', [ExpenseController::class, 'destroy'])->middleware(['auth', 'verified'])->name('member.expenses.destroy');
+Route::post('/payments/{paymentId}/pay', [ExpenseController::class, 'pay'])->middleware(['auth', 'verified'])->name('member.payments.pay');
+Route::post('/colocation/{id}/invitation', [InvitationController::class, 'store'])->middleware(['auth', 'verified'])->name('member.colocations.invitation.store');
+Route::get('/invited/{token}', [InvitationController::class, 'show'])->name('invitations.show');
+Route::post('/invited/{token}/accept', [InvitationController::class, 'accept'])->middleware(['auth', 'verified'])->name('invitations.accept');
+Route::post('/invited/{token}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
 Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('admin.dashboard');
 Route::get('/admin/users', [AdminUserController::class, 'index'])->middleware(['auth', 'verified'])->name('admin.users.index');
-Route::get('/admin/accommodations', [AdminAccommodationController::class, 'index'])->middleware(['auth', 'verified'])->name('admin.accommodations.index');
-Route::get('/admin/expenses', [AdminExpenseController::class, 'index'])->middleware(['auth', 'verified'])->name('admin.expenses.index');
-Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('owner.dashboard');
-Route::get('/member/dashboard', [MemberDashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('member.dashboard');
-
-Route::get('/dashboard', function () {
-    $user = auth()->user();
-
-    if (strtolower($user->role?->name ?? '') === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
-
-    if ($user->is_owner) {
-        return redirect()->route('owner.dashboard');
-    }
-
-    $hasActiveMembership = $user->memberships()
-        ->where('is_active', true)
-        ->exists();
-
-    if ($hasActiveMembership) {
-        return redirect()->route('member.dashboard');
-    }
-
-    return view('dashboard');
-})
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
+Route::post('/users/{user}/ban', [AdminUserController::class, 'ban'])->name('admin.users.ban');
+Route::post('/users/{user}/unban', [AdminUserController::class, 'unban'])->name('admin.users.unban');
+Route::get('/dashboard', [memberDashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -61,9 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 Route::get('/', function () {
     return view('welcome');
 });
-
 
 require __DIR__ . '/auth.php';
