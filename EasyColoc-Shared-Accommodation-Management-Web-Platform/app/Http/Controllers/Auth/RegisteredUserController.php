@@ -18,9 +18,12 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        $email = request('email');
+        $invitation_token = request('invitation_token');
+
+        return view('auth.register', compact('email', 'invitation_token'));
     }
 
     /**
@@ -34,6 +37,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'invitation_token' => ['nullable', 'string'],
         ]);
 
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
@@ -51,6 +55,10 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+
+        if ($request->filled('invitation_token')) {
+            return redirect()->route('invitations.show', $request->invitation_token);
+        }
 
         return redirect(route('dashboard', absolute: false));
     }
