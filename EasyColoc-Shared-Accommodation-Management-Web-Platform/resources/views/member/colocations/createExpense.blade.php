@@ -11,14 +11,9 @@
 <body class="bg-slate-50 text-slate-900 antialiased">
     @php
         $user = auth()->user();
-
         $userName = $user->name;
         $initial = strtoupper(substr($userName, 0, 1));
-
-        $isAdmin = false;
-        if ($user) {
-            $isAdmin = $user->role?->name === 'Admin';
-        }
+        $isAdmin = $user->role?->name === 'Admin';
     @endphp
 
     <div class="min-h-screen flex">
@@ -70,7 +65,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-[11px] uppercase tracking-wider text-slate-300">Votre réputation</div>
-                            <div class="text-2xl font-extrabold mt-1">+{{ $user->reputation ?? 0 }} points</div>
+                            <div class="text-2xl font-extrabold mt-1">{{ $user->reputation }} points</div>
                         </div>
                         <div class="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">Beta</div>
                     </div>
@@ -83,16 +78,7 @@
         </aside>
 
         <main class="flex-1 px-6 py-6">
-            @if ($errors->any())
-                <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3">
-                    <div class="text-sm font-semibold text-rose-700">Please fix the following:</div>
-                    <ul class="mt-1 text-sm text-rose-700 list-disc pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+  
 
             <div class="flex items-center justify-between gap-4 mb-8">
                 <div>
@@ -159,12 +145,19 @@
                                     required>
                                     <option value="">Select category</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">
+                                        <option value="{{ $category->id }}" @selected((string) old('category_id') === (string) $category->id)>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
 
                                 </select>
+                                @if ($categories->isEmpty())
+                                    <p class="mt-2 text-xs text-rose-600">
+                                        No categories in this colocation.
+                                        <a href="{{ route('member.colocations.categories.create', $colocation->id) }}"
+                                            class="underline font-semibold">Create one</a>.
+                                    </p>
+                                @endif
                             </div>
 
 

@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Category>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Invitation>
  */
-class CategoryFactory extends Factory
+class InvitationFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,10 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->randomElement(['Groceries', 'Rent', 'Utilities', 'Internet', 'Cleaning', 'Repairs']),
             'shared_accommodation_id' => \App\Models\SharedAccommodation::factory(),
+            'email' => fake()->safeEmail(),
+            'token' => \Illuminate\Support\Str::random(32),
+            'status' => fake()->randomElement(['pending', 'accepted', 'declined']),
         ];
     }
 }

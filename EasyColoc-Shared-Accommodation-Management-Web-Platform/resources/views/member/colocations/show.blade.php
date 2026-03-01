@@ -13,11 +13,7 @@
         $user = auth()->user();
         $userName = $user->name;
         $initial = strtoupper(substr($userName, 0, 1));
-
-        $isAdmin = false;
-        if ($user) {
-            $isAdmin = $user->role?->name === 'Admin';
-        }
+        $isAdmin = $user->role?->name === 'Admin';
     @endphp
 
     <div class="min-h-screen flex">
@@ -70,7 +66,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-[11px] uppercase tracking-wider text-slate-300">Votre réputation</div>
-                            <div class="text-2xl font-extrabold mt-1">+{{ $user->reputation ?? 0 }} points</div>
+                            <div class="text-2xl font-extrabold mt-1">{{ $user->reputation }} points</div>
                         </div>
                         <div class="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">Beta</div>
                     </div>
@@ -84,6 +80,17 @@
         </aside>
 
         <main class="flex-1 px-6 py-6">
+            @if (session('error'))
+                <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                    {{ session('success') }}
+                </div>
+            @endif
 
             <div class="flex items-center justify-between gap-4 mb-8">
                 <div>
@@ -93,10 +100,21 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <a href=""
-                        class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition shadow-sm">
-                        Annuler la colocation
-                    </a>
+                    <form method="POST" action="{{ route('member.colocations.cancel', $colocation->id) }}">
+                        @csrf
+                        <button type="submit"
+                            class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition shadow-sm">
+                            Annuler la colocation
+                        </button>
+                    </form>
+
+                    <form method="POST" action="{{ route('member.colocations.leave', $colocation->id) }}">
+                        @csrf
+                        <button type="submit"
+                            class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition shadow-sm">
+                            Quitter la colocation
+                        </button>
+                    </form>
 
                     <a href="{{ route('member.colocations.index') }}"
                         class="px-4 py-2 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800 transition shadow-sm">
@@ -127,11 +145,19 @@
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <select class="text-sm border border-slate-200 rounded-xl px-3 py-2 bg-white">
-                                <option>Tous les mois</option>
-                                <option>Ce mois</option>
-                                <option>Mois dernier</option>
-                            </select>
+                            <form method="GET" action="{{ route('member.colocations.show', $colocation->id) }}">
+                                <select name="month" onchange="this.form.submit()"
+                                    class="text-sm border border-slate-200 rounded-xl px-3 py-2 bg-white">
+                                    <option value="all" @selected($monthFilter === 'all')>Tous les mois</option>
+                                    <option value="current" @selected($monthFilter === 'current')>Ce mois</option>
+                                    <option value="last" @selected($monthFilter === 'last')>Mois dernier</option>
+                                </select>
+                            </form>
+
+                            <a href="{{ route('member.colocations.categories.index', $colocation->id) }}"
+                                class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition shadow-sm">
+                                Categories
+                            </a>
 
                             <a href="{{ route('member.colocations.expense', $colocation->id) }}"
                                 class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition shadow-sm">
@@ -149,39 +175,60 @@
                         </div>
 
                         <div class="mt-3 divide-y divide-slate-100 border border-slate-200 rounded-2xl overflow-hidden">
-                            @forelse($expenses as $expense)
-                                <div class="grid grid-cols-12 gap-2 px-4 py-4 items-center bg-white">
-                                    <div class="col-span-6">
-                                        <div class="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                                            <span>{{ $expense->title }}</span>
-                                            @if ($expense->paid)
-                                                <span
-                                                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                                    DONE
-                                                </span>
-                                            @else
-                                                <span
-                                                    class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
-                                                    NOT DONE YET
-                                                </span>
-                                            @endif
-                                        </div>
-                                        <div class="text-xs text-slate-500">{{ $expense->category?->name ?? 'N/A' }}
-                                        </div>
-                                    </div>
-                                    <div class="col-span-3 text-sm text-slate-700">{{ $expense->user?->name ?? 'N/A' }}
-                                    </div>
-                                    <div class="col-span-3 text-sm font-semibold text-slate-900 text-right">
-                                        {{ number_format((float) $expense->amount, 2) }}
-                                    </div>
-                                </div>
-                            @empty
+                            @if ($expenses->isEmpty())
                                 <div class="px-4 py-10 text-center bg-slate-50">
                                     <div class="text-sm font-medium text-slate-700">Aucune dépense pour le moment.
                                     </div>
-                                    <div class="text-xs text-slate-500 mt-1">Ajoutez une dépense pour commencer.</div>
+                                    <div class="text-xs text-slate-500 mt-1">Ajoutez une dépense pour commencer.
+                                    </div>
                                 </div>
-                            @endforelse
+                            @else
+                                @foreach ($expenses as $expense)
+                                    <div class="grid grid-cols-12 gap-2 px-4 py-4 items-center bg-white">
+                                        <div class="col-span-6">
+                                            <div class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                                                <span>{{ $expense->title }}</span>
+                                                @if ($expense->paid)
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                                        DONE
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
+                                                        NOT DONE YET
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <div class="text-xs text-slate-500">{{ $expense->category?->name }}
+                                            </div>
+                                        </div>
+                                        <div class="col-span-3 text-sm text-slate-700">{{ $expense->user?->name }}
+                                        </div>
+                                        <div class="col-span-3 text-sm font-semibold text-slate-900 text-right">
+                                            {{ number_format($expense->amount, 2) }}
+                                            @php
+                                                $user = auth()->user();
+                                                $isOwner = $user->is_owner === true;
+                                                $isExpenseCreator = $expense->user_id === $user->id;
+                                                $canDeleteExpense = $isExpenseCreator || $isOwner;
+                                            @endphp
+                                            @if ($canDeleteExpense)
+                                                <form method="POST"
+                                                    action="{{ route('member.expenses.destroy', $expense->id) }}"
+                                                    onsubmit="return confirm('Delete this expense?');"
+                                                    class="mt-2 inline-block">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold hover:bg-rose-200 transition">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </section>
@@ -219,14 +266,14 @@
                                             <div class="flex items-start justify-between gap-3">
                                                 <div>
                                                     <div class="text-sm font-semibold text-slate-800">
-                                                        {{ $payment->receiver?->name ?? 'User' }} pays
+                                                        {{ $payment->receiver?->name }} pays
                                                         {{ number_format((float) $payment->amount, 2) }}
                                                     </div>
                                                     <div class="text-xs text-slate-500 mt-0.5">
-                                                        For: {{ $payment->expense?->title ?? 'Expense' }}
+                                                        For: {{ $payment->expense?->title }}
                                                     </div>
                                                     <div class="text-xs text-slate-500">
-                                                        To: {{ $payment->expense?->user?->name ?? 'Unknown' }}
+                                                        To: {{ $payment->expense?->user?->name }}
                                                     </div>
                                                 </div>
 
@@ -263,22 +310,21 @@
                             <div class="space-y-3">
                                 @php
                                     $myMembership = $memberships->firstWhere('user_id', auth()->id());
-                                    $isCurrentUserOwner = strtolower($myMembership?->role ?? '') === 'owner';
+                                    $isCurrentUserOwner = strtolower($myMembership?->role) === 'owner';
                                 @endphp
                                 @foreach ($memberships as $membership)
                                     @php
                                         $isOwner = strtolower($membership->role) === 'owner';
-                                        $isMe = (int) $membership->user_id === (int) auth()->id();
                                     @endphp
                                     <div
                                         class="flex items-center justify-between rounded-xl px-3 py-3 border {{ $isOwner ? 'bg-amber-500/10 border-amber-300/50' : 'bg-slate-800/60 border-transparent' }}">
                                         <div class="flex items-center gap-3">
                                             <div
                                                 class="w-9 h-9 rounded-xl flex items-center justify-center font-bold {{ $isOwner ? 'bg-amber-400 text-amber-950' : 'bg-slate-700' }}">
-                                                {{ strtoupper(substr($membership->user?->name ?? 'U', 0, 1)) }}
+                                                {{ strtoupper(substr($membership->user?->name, 0, 1)) }}
                                             </div>
                                             <div class="leading-tight">
-                                                <div class="font-semibold">{{ $membership->user?->name ?? 'Unknown' }}
+                                                <div class="font-semibold">{{ $membership->user?->name }}
                                                 </div>
                                                 <div
                                                     class="text-xs {{ $isOwner ? 'text-amber-200 font-semibold' : 'text-slate-300' }}">
@@ -288,14 +334,22 @@
                                                             class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded bg-amber-300 text-amber-950 text-[10px] font-bold">OWNER</span>
                                                     @endif
                                                 </div>
+                                                <div class="text-[11px] text-slate-300 mt-1">
+                                                    Reputation: {{ (int) $membership->user?->reputation }}
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            @if ($isCurrentUserOwner && !$isMe)
-                                                <button type="button"
-                                                    class="text-xs px-2.5 py-1 rounded-lg bg-rose-100 text-rose-700 border border-rose-200 font-semibold hover:bg-rose-200 transition">
-                                                    Remove
-                                                </button>
+                                            @if ($isCurrentUserOwner && !$isOwner)
+                                                <form method="POST"
+                                                    action="{{ route('member.colocations.members.kick', ['id' => $colocation->id, 'memberUserId' => $membership->user_id]) }}"
+                                                    onsubmit="return confirm('Kick this member?');">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="text-xs px-2.5 py-1 rounded-lg bg-rose-100 text-rose-700 border border-rose-200 font-semibold hover:bg-rose-200 transition">
+                                                        Remove
+                                                    </button>
+                                                </form>
                                             @endif
 
                                         </div>

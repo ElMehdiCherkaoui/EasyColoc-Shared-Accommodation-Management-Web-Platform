@@ -16,12 +16,8 @@
         $userName = $user->name;
         $initial = strtoupper(substr($userName, 0, 1));
 
-        $isAdmin = false;
-        if ($user) {
             $isAdmin = $user->role?->name === 'Admin';
-        }
 
-        $current = 'dashboard';
     @endphp
 
     <div class="min-h-screen flex">
@@ -89,7 +85,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-[11px] uppercase tracking-wider text-slate-300">Votre réputation</div>
-                            <div class="text-2xl font-extrabold mt-1">+0 points</div>
+                            <div class="text-2xl font-extrabold mt-1">{{$user->reputation}}</div>
                         </div>
                         <div class="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">
                             Beta
@@ -142,13 +138,13 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between">
-                        <div class="text-sm text-slate-500">My colocations</div>
+                        <div class="text-sm text-slate-500">My colocations total</div>
                         <div
                             class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
                             🏠</div>
                     </div>
-                    <div class="text-3xl font-bold mt-3">0</div>
-                    <div class="text-xs text-slate-500 mt-1">Active homes you joined/created</div>
+                    <div class="text-3xl font-bold mt-3">{{ $activeColocationsCount }}</div>
+                    <div class="text-xs text-slate-500 mt-1">homes you joined/created</div>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
@@ -158,19 +154,21 @@
                             class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
                             🧾</div>
                     </div>
-                    <div class="text-3xl font-bold mt-3">0</div>
+                    <div class="text-3xl font-bold mt-3">{{ $totalExpensesCount }}</div>
                     <div class="text-xs text-slate-500 mt-1">Expenses created in your colocations</div>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between">
-                        <div class="text-sm text-slate-500">Balance</div>
+                        <div class="text-sm text-slate-500">Balance you owen</div>
                         <div
                             class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
                             ⚖️</div>
                     </div>
-                    <div class="text-3xl font-bold mt-3">0 DH</div>
-                    <div class="text-xs text-slate-500 mt-1">What you owe / what you should receive</div>
+                    <div class="text-3xl font-bold mt-3">
+                        {{ number_format((float) $totalOwe, 2) }} DH
+                    </div>
+
                 </div>
             </div>
 

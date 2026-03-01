@@ -15,10 +15,8 @@
         $userName = $user->name;
         $initial = strtoupper(substr($userName, 0, 1));
 
-        $isAdmin = false;
-        if ($user) {
-            $isAdmin = $user->role?->name === 'Admin';
-        }
+        $isAdmin = $user->role?->name === 'Admin';
+
     @endphp
 
     <div class="min-h-screen flex">
@@ -80,7 +78,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-[11px] uppercase tracking-wider text-slate-300">Votre réputation</div>
-                            <div class="text-2xl font-extrabold mt-1">+{{ $user->reputation ?? 0 }} points</div>
+                            <div class="text-2xl font-extrabold mt-1">{{ $user->reputation }} points</div>
                         </div>
                         <div class="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">
                             Beta
@@ -171,14 +169,15 @@
                         @foreach ($memberships as $m)
                             @php
                                 $isActive = $m->is_active;
-                                $isCancelled = $m->sharedAccommodation->status === 'false' ;
+                                $isCancelled = $m->sharedAccommodation->status === 'cancelled';
                             @endphp
 
-                            @if ($isCancelled)
-                                <div class="group rounded-2xl border p-5 shadow-sm hover:shadow-md transition bg-white border-slate-200 opacity-70">
-                            @else
-                                <a href="{{ route('member.colocations.show', $m->shared_accommodation_id) }}"
-                                    class="group rounded-2xl border p-5 shadow-sm hover:shadow-md transition bg-indigo-50 border-indigo-200">
+                            @if ($isCancelled || !$isActive)
+                                <div
+                                    class="group rounded-2xl border p-5 shadow-sm hover:shadow-md transition bg-white border-slate-200 opacity-70">
+                                @else
+                                    <a href="{{ route('member.colocations.show', $m->shared_accommodation_id) }}"
+                                        class="group rounded-2xl border p-5 shadow-sm hover:shadow-md transition bg-indigo-50 border-indigo-200">
                             @endif
 
                             <div class="flex items-start justify-between gap-3">
@@ -191,11 +190,9 @@
                                     <div>
                                         <div
                                             class="font-semibold text-slate-900 group-hover:text-indigo-700 transition">
-                                            {{ $m->sharedAccommodation->name  }}
+                                            {{ $m->sharedAccommodation->name }}
                                         </div>
-                                        <div class="text-xs text-slate-500">
-                                            Joined {{ \Carbon\Carbon::parse($m->joined_at)->format('M d, Y') }}
-                                        </div>
+
                                     </div>
                                 </div>
 
@@ -224,16 +221,16 @@
                             </div>
 
                             @if ($isCancelled)
-                                </div>
-                            @else
-                                </a>
-                            @endif
-                        @endforeach
                     </div>
+                @else
+                    </a>
                 @endif
-            </section>
+                @endforeach
+    </div>
+    @endif
+    </section>
 
-        </main>
+    </main>
     </div>
 </body>
 

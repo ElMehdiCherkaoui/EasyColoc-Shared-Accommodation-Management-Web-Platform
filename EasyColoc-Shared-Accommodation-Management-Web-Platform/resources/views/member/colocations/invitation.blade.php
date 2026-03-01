@@ -16,8 +16,6 @@
         $initial = strtoupper(substr($userName, 0, 1));
         $isAdmin = $user?->role?->name === 'Admin';
 
-        $invitations = $invitations ?? collect();
-        $pendingCount = $invitations->where('status', 'pending')->count();
     @endphp
 
     <div class="min-h-screen flex">
@@ -69,7 +67,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-[11px] uppercase tracking-wider text-slate-300">Votre réputation</div>
-                            <div class="text-2xl font-extrabold mt-1">+{{ $user->reputation ?? 0 }} points</div>
+                            <div class="text-2xl font-extrabold mt-1">{{ $user->reputation  }} points</div>
                         </div>
                         <div class="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">Beta</div>
                     </div>

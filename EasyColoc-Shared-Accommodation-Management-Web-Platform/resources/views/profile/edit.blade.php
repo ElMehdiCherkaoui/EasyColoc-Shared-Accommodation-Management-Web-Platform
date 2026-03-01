@@ -18,10 +18,8 @@
         $userName = $user->name;
         $initial = strtoupper(substr($userName, 0, 1));
 
-        $isAdmin = false;
-        if ($user) {
             $isAdmin = $user->role?->name === 'Admin';
-        }
+        
 
     @endphp
 
@@ -99,7 +97,7 @@
                     <div class="flex items-start justify-between">
                         <div>
                             <div class="text-[11px] uppercase tracking-wider text-slate-300">Votre réputation</div>
-                            <div class="text-2xl font-extrabold mt-1">+{{ $user->reputation ?? 0 }} points</div>
+                            <div class="text-2xl font-extrabold mt-1">{{ $user->reputation }} points</div>
                         </div>
                         <div class="text-xs px-2 py-1 rounded-full bg-slate-700 text-slate-200">
                             Beta
@@ -166,7 +164,7 @@
                             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
                                 <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                                     Reputation</div>
-                                <div class="mt-1 text-2xl font-bold text-slate-900">{{ $user->reputation ?? 0 }}</div>
+                                <div class="mt-1 text-2xl font-bold text-slate-900">{{ $user->reputation }}</div>
                             </div>
                             <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
                                 <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Status
